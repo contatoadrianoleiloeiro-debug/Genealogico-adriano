@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adriano Apolinário - Genealogia</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- CABEÇALHO -->
+    <header class="app-header">
+        <div class="logo-container">
+            <!-- Substitua 'logo.png' pelo arquivo real da sua logomarca -->
+            <img src="logo.png" alt="Adriano Apolinário" class="logo-img">
+        </div>
+
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('arvore')">
+                <i class="fa-solid fa-sitemap"></i> Árvore Genealógica
+            </button>
+            <button class="tab-btn" onclick="openModalCadastro()">
+                <i class="fa-solid fa-plus-circle"></i> Cadastrar Animais
+            </button>
+            <button class="tab-btn" onclick="salvarAlteracoes()">
+                <i class="fa-solid fa-floppy-disk"></i> Salvar Alterações
+            </button>
+        </nav>
+
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Pesquisar animais..." onkeyup="pesquisarAnimal()">
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL (ÁRVORE GENEALÓGICA) -->
+    <main class="main-content">
+        <div class="tree-container">
+            <div class="tree-title">
+                <h2>Árvore Genealógica em Destaque</h2>
+                <p>Toque em qualquer animal para visualizar as informações detalhadas</p>
+            </div>
+
+            <!-- Estrutura Gráfica da Árvore -->
+            <div class="genealogy-tree">
+                <!-- Avós Paternos / Maternos (Exemplo Visual) -->
+                <div class="generation level-3">
+                    <div class="node" onclick="destacarAnimal(this)">
+                        <span class="animal-tipo">Bovino • Nelore</span>
+                        <h4>Bisavô A</h4>
+                        <small>Reg: 00123</small>
+                    </div>
+                    <div class="node" onclick="destacarAnimal(this)">
+                        <span class="animal-tipo">Bovino • Nelore</span>
+                        <h4>Bisavó A</h4>
+                        <small>Reg: 00124</small>
+                    </div>
+                    <div class="node" onclick="destacarAnimal(this)">
+                        <span class="animal-tipo">Bovino • Guzerá</span>
+                        <h4>Bisavô B</h4>
+                        <small>Reg: 00125</small>
+                    </div>
+                    <div class="node" onclick="destacarAnimal(this)">
+                        <span class="animal-tipo">Bovino • Guzerá</span>
+                        <h4>Bisavó B</h4>
+                        <small>Reg: 00126</small>
+                    </div>
+                </div>
+
+                <!-- Pais -->
+                <div class="generation level-2">
+                    <div class="node" onclick="destacarAnimal(this)">
+                        <span class="animal-tipo">Bovino • Meio Sangue</span>
+                        <h4>Pai: Sultan FIV</h4>
+                        <small>Reg: 10452</small>
+                    </div>
+                    <div class="node" onclick="destacarAnimal(this)">
+                        <span class="animal-tipo">Bovino • Girolando</span>
+                        <h4>Mãe: Belinha TE</h4>
+                        <small>Reg: 10453</small>
+                    </div>
+                </div>
+
+                <!-- Animal Selecionado / Principal -->
+                <div class="generation level-1">
+                    <div class="node highlighted" onclick="destacarAnimal(this)">
+                        <span class="tag-destaque">Animal Selecionado</span>
+                        <span class="animal-tipo">Bovino • 3/4 Girolando</span>
+                        <h3>Atalaia Apolinário</h3>
+                        <small>Reg: 50987</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL DE CADASTRO (Oculto por padrão) -->
+    <div id="modalCadastro" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModalCadastro()">&times;</span>
+            <h2><i class="fa-solid fa-circle-plus"></i> Cadastro de Animal</h2>
+            
+            <form id="formCadastro" onsubmit="cadastrarAnimal(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Registro (Obrigatório)*:</label>
+                        <input type="text" id="regRegistro" required onblur="verificarRegistroDuplicado(this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Nome do Animal (Obrigatório)*:</label>
+                        <input type="text" id="regNome" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Sexo:</label>
+                        <select id="regSexo" onchange="controlarLactacao(this.value)">
+                            <option value="Macho">Macho</option>
+                            <option value="Femea">Fêmea</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Animal:</label>
+                        <div class="inline-group">
+                            <select id="regTipo" onchange="atualizarRacas()">
+                                <option value="Bovinos">Bovinos</option>
+                                <option value="Equinos">Equinos</option>
+                                <option value="Ovinos">Ovinos</option>
+                                <option value="Caprinos">Caprinos</option>
+                                <option value="Muares">Muares</option>
+                            </select>
+                            <button type="button" class="btn-small" onclick="adicionarNovoTipo()">+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Raça:</label>
+                        <select id="regRaca">
+                            <option value="Nelore">Nelore</option>
+                            <option value="Guzerá">Guzerá</option>
+                            <option value="Girolando">Girolando</option>
+                            <option value="Guzolando">Guzolando</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Variação / Grau de Sangue:</label>
+                        <select id="regVariacao">
+                            <option value="Puro (PO)">Puro (PO)</option>
+                            <option value="Meio Sangue">Meio Sangue (1/2)</option>
+                            <option value="3/4">3/4</option>
+                            <option value="5/8">5/8</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Campo condicional para Fêmeas -->
+                    <div class="form-group" id="grupoLactacao" style="display: none;">
+                        <label>Lactações (Litros/Histórico):</label>
+                        <input type="text" id="regLactacao" placeholder="Ex: 4.500 kg na 1ª cria">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Premiações:</label>
+                        <input type="text" id="regPremiacoes" placeholder="Ex: Campeão Expointer">
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Observações:</label>
+                    <textarea id="regObs" rows="3" placeholder="Informações adicionais..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Salvar Cadastro</button>
+                    <button type="button" class="btn-secondary" onclick="closeModalCadastro()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
